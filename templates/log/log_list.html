@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% load django_bootstrap_breadcrumbs %}
+{% block base_title %}Logs{% endblock %}
+
+{% block breadcrumbs %}
+    {% breadcrumb "Home" "homepage" %}
+    {% breadcrumb "Projects" "projects" %}
+    {% breadcrumb task.project.name "project-detail" task.project.slug %}
+    {% breadcrumb task.topic "task-detail" task.pk %}
+    {% breadcrumb "logs" task.pk %}
+    {% render_breadcrumbs %}
+{% endblock %}
+
+{% block content %}
+    {% if has_perm_add_log %}
+    <div class="row mb-2">
+        <div class="col-md-12">
+            <div class="float-right">
+                <a href="{% url 'log-new' task.pk %}" class="btn btn-primary">New log</a>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    <table class="table">
+        <thead class="thead-light">
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Spent time</th>
+            <th scope="col">Comment</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for log in logs %}
+            <tr>
+                <th scope="row">{{ forloop.counter }}</th>
+                <td>{{ log.spent_time }} h</td>
+                <td>{{ log.comment }}</td>
+                <td>
+                    <div class="float-right">
+                        {% if perms.log.change_log %}
+                        <a href="{% url 'log-update' task.pk log.pk %}" class="text-warning"><i class="fas fa-edit"></i></a>
+                        {% endif %}
+                        {% if perms.log.delete_log %}
+                        <form action="{% url 'log-delete' log.pk %}?next={{ request.path|urlencode }}" method="post" class="delete-form-btn" onsubmit="return confirm('Are You sure You want to delete the log?')">
+                            {% csrf_token %}
+                            <button type="submit" class="transparent-btn text-danger">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        </form>
+                        {% endif %}
+                    </div>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <div class="float-right">
+        {% include '_pagination.html' %}
+    </div>
+{% endblock content %}

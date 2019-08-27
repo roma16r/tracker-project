@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% load django_bootstrap_breadcrumbs %}
+{% block base_title %}Projects{% endblock %}
+
+{% block breadcrumbs %}
+    {% breadcrumb "Home" "homepage" %}
+    {% breadcrumb "Projects" "projects" %}
+    {% render_breadcrumbs %}
+{% endblock %}
+
+{% block content %}
+    {% if perms.project.add_project %}
+    <div class="row mb-2">
+        <div class="col-md-12">
+            <div class="float-right">
+                <a href="{% url 'project-new' %}" class="btn btn-primary">New project</a>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <table class="table">
+        <thead class="thead-light">
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Name</th>
+            <th scope="col">Users</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for project in projects %}
+            <tr>
+                <th scope="row">{{ forloop.counter }}</th>
+                <td>
+                    <a href="{% url 'project-detail' project.slug %}">
+                        {{ project.name }}
+                    </a>
+                </td>
+                <td>
+                    {% for user in project.users.all %}
+                        <a href="{% url 'user-detail' user.pk %}">{{ user.username }}</a>{%if not forloop.last%},{%endif%}
+                    {% endfor %}
+                </td>
+                <td>
+                    <div class="float-right">
+                        {% if perms.project.change_project %}
+                        <a href="{% url 'project-update' project.slug %}" class="text-warning"><i class="fas fa-edit"></i></a>
+                        {% endif %}
+                        {% if perms.project.delete_project %}
+                        <form action="{% url 'project-delete' project.slug %}" method="post" class="delete-form-btn" onsubmit="return confirm('Are You sure You want to delete the project?')">
+                            {% csrf_token %}
+                            <button type="submit" class="transparent-btn text-danger">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        </form>
+                        {% endif %}
+                    </div>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <div class="float-right">
+        {% include '_pagination.html' %}
+    </div>
+{% endblock content %}

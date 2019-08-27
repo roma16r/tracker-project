@@ -1,0 +1,15 @@
+.transparent-btn {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+}
+
+.delete-form-btn {
+    display: inline-block;
+}
+
+.comment .date {
+    color: gray;
+    font-size: 12px;
+}

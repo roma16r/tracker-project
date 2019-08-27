@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+{% load django_bootstrap_breadcrumbs %}
+{% block base_title %}{{ project.name }}{% endblock %}
+
+{% block breadcrumbs %}
+    {% breadcrumb "Home" "homepage" %}
+    {% breadcrumb "Projects" "projects" %}
+    {% breadcrumb project.name "project-detail" project.slug %}
+    {% render_breadcrumbs %}
+{% endblock %}
+
+{% block content %}
+    <div class="row mb-2">
+        <div class="col-md-12">
+            <strong>Name:</strong> {{ project.name }} <br>
+            <strong>Users:</strong>
+            {% for user in project.users.all %}
+                <a href="{% url 'user-detail' user.pk %}">{{ user.username }}</a>{% if not forloop.last %},{% endif %}
+            {% endfor %}
+            <br>
+            <strong>Description:</strong> {{ project.description|safe }}
+        </div>
+    </div>
+    {% if perms.task.add_task %}
+    <div class="row mb-2">
+        <div class="col-md-12">
+            <div class="float-right">
+                <a href="{% url 'task-new' project.slug %}" class="btn btn-primary">New task</a>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    <table class="table">
+        <thead class="thead-light">
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Topic</th>
+            <th scope="col">Start date</th>
+            <th scope="col">Finish date</th>
+            <th scope="col">Type</th>
+            <th scope="col">Priority</th>
+            <th scope="col">Estimate time</th>
+            <th scope="col">Executor</th>
+            <th scope="col">Creator</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for task in object_list %}
+            <tr>
+                <th scope="row">{{ forloop.counter }}</th>
+                <td>
+                    <a href="{% url 'task-detail' task.pk %}">{{ task.topic }}</a>
+                </td>
+                <td>{{ task.start_date|date:"d M Y" }}</td>
+                <td>{{ task.finish_date|date:"d M Y" }}</td>
+                <td>{{ task.get_type_display }}</td>
+                <td>{{ task.get_priority_display }}</td>
+                <td>{{ task.estimate_time }} h</td>
+                <td>
+                    <a href="{% url 'user-detail' task.executor.pk %}">{{ task.executor.username }}</a>
+                </td>
+                <td>
+                    <a href="{% url 'user-detail' task.creator.pk %}">{{ task.creator.username }}</a>
+                </td>
+                <td>
+                    <div class="float-right">
+                        <a href="{% url 'task-update' slug=project.slug pk=task.pk %}" class="text-warning"><i class="fas fa-edit"></i></a>
+                        {% if perms.task.delete_task %}
+                        <form action="{% url 'task-delete' task.pk %}?next={{ request.path|urlencode }}" method="post" class="delete-form-btn" onsubmit="return confirm('Are You sure You want to delete the task?')">
+                            {% csrf_token %}
+                            <button type="submit" class="transparent-btn text-danger">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        </form>
+                        {% endif %}
+                    </div>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+      <div class="float-right">
+        {% include '_pagination.html' %}
+    </div>
+{% endblock content %}

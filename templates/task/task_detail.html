@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% load django_bootstrap_breadcrumbs %}
+{% block base_title %}{{ task.topic }}{% endblock %}
+
+{% block breadcrumbs %}
+    {% breadcrumb "Home" "homepage" %}
+    {% breadcrumb "Projects" "projects" %}
+    {% breadcrumb task.project.name "project-detail" task.project.slug %}
+    {% breadcrumb task.topic "task-detail" task.pk %}
+    {% render_breadcrumbs %}
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-12">
+            <div class="float-right">
+                <a href="{% url 'logs' task.pk  %}" class="btn btn-success">Log time</a>
+            </div>
+        </div>
+    </div>
+    <div class="row mb-2">
+        <div class="col-md-12">
+            <strong>Topic:</strong> {{ task.topic }} <br>
+            <strong>Start date</strong> {{ task.start_date|date:'d M Y' }} <br>
+            <strong>Finish date</strong> {{ task.finish_date|date:'d M Y' }} <br>
+            <strong>Type</strong> {{ task.get_type_display }} <br>
+            <strong>Priority</strong> {{ task.get_priority_display }} <br>
+            <strong>Estimate time</strong> {{ task.estimate_time }} h <br>
+            <strong>Spent time</strong> {{ task.spent_time_total }} h<br>
+            <strong>Creator</strong> <a href="{% url 'user-detail' task.creator.pk %}">{{ task.creator.username }}</a> <br>
+            <strong>Executor</strong> <a href="{% url 'user-detail' task.executor.pk %}">{{ task.executor.username }}</a> <br>
+            <strong>Description:</strong>
+            <p>{{ task.description }}</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4">
+            <form method="post" class="clearfix mb-3">
+                {% csrf_token %}
+                {{ comment_form|crispy }}
+                <div class="form-group">
+                    <input type="submit" class="btn btn-success float-right" value="Add comment">
+                </div>
+            </form>
+
+            {% for comment in task.comment_set.all %}
+                <div class="card mb-3 comment">
+                <div class="card-header">
+                    <a href="{% url 'user-detail' comment.user.pk %}">{{ comment.user.username }}</a>
+                    <div class="date float-right">
+                        {{ comment.created_at|date:"d M Y H:i" }}
+                    </div>
+                </div>
+                <div class="card-body">
+                    {{ comment.text }}
+                </div>
+            </div>
+            {% endfor %}
+
+        </div>
+    </div>
+{% endblock content %}

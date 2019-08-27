@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% block base_title %}Users list{% endblock %}
+
+{% block content %}
+    <div class="row mb-2">
+        <div class="col-md-12">
+            <div class="float-right">
+                <a href="{% url 'user-new' %}" class="btn btn-primary">New user</a>
+            </div>
+        </div>
+    </div>
+    <table class="table">
+        <thead class="thead-light">
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Username</th>
+            <th scope="col">First name</th>
+            <th scope="col">Last name</th>
+            <th scope="col">Email</th>
+            <th scope="col">Birth date</th>
+            <th scope="col">Position</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for user in users %}
+            <tr>
+                <th scope="row">{{ forloop.counter }}</th>
+                <td>
+                    <a href="{% url 'user-detail' user.pk %}">
+                        {{ user.username }}
+                    </a>
+                </td>
+                <td>{{ user.first_name }}</td>
+                <td>{{ user.last_name }}</td>
+                <td>{{ user.email }}</td>
+                <td>{{ user.birth_date|date:"d M Y" }}</td>
+                <td>{{ user.position }}</td>
+                <td>
+                    <div class="float-right">
+                        <a href="{% url 'user-update' user.pk %}" class="text-warning"><i class="fas fa-edit"></i></a>
+                        <form action="{% url 'user-delete' user.pk %}" method="post" class="delete-form-btn" onsubmit="return confirm('Are You sure You want to delete the user?')">
+                            {% csrf_token %}
+                            <button type="submit" class="transparent-btn text-danger">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <div class="float-right">
+        {% include '_pagination.html' %}
+    </div>
+{% endblock content %}

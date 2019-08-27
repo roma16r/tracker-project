@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+{% block base_title %}{{ user.username }}{% endblock %}
+{% block content %}
+     <div class="row h-100 justify-content-center align-items-center">
+        <div class="col-md-5">
+            <div class="card bg-light">
+                <div class="card-header"><strong>{{ user.username }}</strong> profile</div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col mb-5">
+                            <img src="{{ user.image_url }}" alt="profile image">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col font-weight-bold">First name</div>
+                        <div class="col">{{ user.first_name }}</div>
+                    </div>
+                    <div class="row">
+                        <div class="col font-weight-bold">Last name</div>
+                        <div class="col">{{ user.last_name }}</div>
+                    </div>
+                    <div class="row">
+                        <div class="col font-weight-bold">Email address</div>
+                        <div class="col">
+                            <a href="mailto:{{ user.email }}">{{ user.email }}</a>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col font-weight-bold">Birth date</div>
+                        <div class="col">{{ user.birth_date|date:'d M Y' }}</div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col font-weight-bold">Position</div>
+                        <div class="col">{{ user.position }}</div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col font-weight-bold">Groups</div>
+                        <div class="col">
+                            {% for group in user.groups.all %}
+                            {{ group }}{%if not forloop.last%},{%endif%}
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}

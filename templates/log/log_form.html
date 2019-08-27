@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+{% block content %}
+     <div class="row h-100 justify-content-center align-items-center">
+        <div class="col-md-5">
+            <div class="card bg-light">
+                <div class="card-header">{% block title %}{% endblock %}</div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        {{ form|crispy }}
+                        <div class="form-group">
+                            <input type="submit" class="btn btn-success float-right" value="{% block button_text %}{% endblock %}">
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}
