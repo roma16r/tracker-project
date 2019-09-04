@@ -16,7 +16,8 @@
         "EMAIL_HOST_USER": "user",
         "EMAIL_HOST_PASSWORD": "password",
         "EMAIL_USE_SSL": true,
-        "EMAIL_USE_TLS": false
+        "EMAIL_USE_TLS": false,
+        "ALLOWED_HOSTS": []
     }
     ```
 3) Create database

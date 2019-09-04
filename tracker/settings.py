@@ -27,7 +27,7 @@ SECRET_KEY = get_env_key('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = get_env_key('DEBUG')
 
-ALLOWED_HOSTS = ['127.0.0.1']
+ALLOWED_HOSTS = ['127.0.0.1'] + get_env_key('ALLOWED_HOSTS')
 
 
 # Application definition
